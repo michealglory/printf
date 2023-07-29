@@ -1,43 +1,45 @@
 #include "main.h"
+
 /**
-* print_octal - Prints an unsigned integer in octal
-* format to stdout.
-* @o: The va_list containing the unsigned integer to
-* print in octal format.
-* Return: The number of characters printed.
-*/
-int print_octal(va_list o)
+ * print_octal - Converts an unsigned integer to its octal representation
+ *               and writes it to a character buffer.
+ *
+ * @types: A va_list representing the argument list.
+ * @buffer: The character buffer where the octal representation will be
+ * stored.
+ * @flags: An integer representing formatting flags (e.g., F_HASH).
+ * @width: The minimum width of the output, formatted accordingly.
+ * @precision: The number of digits to display for the octal representation.
+ * @size: The size of the number (e.g., sizeof(unsigned long int)).
+ *
+ * Return: The number of characters written to the buffer.
+ */
+
+int print_octal(va_list types, char buffer[],
+		int flags, int width, int precision, int size)
 {
-	int count = 0;
-	unsigned int lenght, pow_of_ten, index, numeral, va_app, num;
+	unsigned long int number = va_arg(types, unsigned long int);
+	unsigned long int original_num = number;
+	int index = BUFF_SIZE - 2;
 
-	va_app = va_arg(o, unsigned int);
-	if (va_app != 0)
+	UNUSED(width);
+	number = cast_num_to_size_unsgnd(number, size);
+
+	if (number == 0)
 	{
-		num = va_app;
-		lenght = 0;
-		while (num != 0)
-		{
-			num /= 8;
-			lenght++;
-		}
-		pow_of_ten = 1;
-		for (index = 1; index <= lenght - 1; index++)
-			pow_of_ten *= 8;
-		for (index = 1; index <= lenght; index++)
-		{
-			numeral = va_app / pow_of_ten;
-			_putchar(numeral + '0');
-			count++;
-			va_app -= numeral * pow_of_ten;
-			pow_of_ten /= 8;
-		}
+		buffer[index--] = '0';
 	}
-	else
+	buffer[BUFF_SIZE - 1] = '\0';
+	while (number > 0)
 	{
-		_putchar('0');
-		return (1);
+		buffer[index--] = (number % 8) + '0';
+		number /= 8;
 	}
-	return (count);
+	if (flags & F_HASH && original_num != 0)
+	{
+		buffer[index--] = '0';
+	}
+	index++;
+	return (write_unsigned_to_stout(0, index, buffer,
+				flags, width, precision, size));
 }
-

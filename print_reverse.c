@@ -1,29 +1,41 @@
-#include <stdarg.h>
-#include <stdio.h>
 #include "main.h"
-/**
-*print_reverse - Prints the reverse of a
-* string to stdout.
-*@r: The va_list containing the string to
-* print in reverse.
-*Return: The number of characters printed.
-*/
-int print_reverse(va_list r)
-{
-	int i, j = 0;
-	char *va_st_app;
 
-	va_st_app = va_arg(r, char *);
-	if (va_st_app == NULL)
+/**
+ * print_reverse - Prints reverse string.
+ * @types: Lista of arguments
+ * @buffer: Buffer array to handle print
+ * @flags:  Calculates active flags
+ * @width: get width
+ * @precision: Precision specification
+ * @size: Size specifier
+ * Return: Numbers of chars printed
+ */
+int print_reverse(va_list types, char buffer[],
+		int flags, int width, int precision, int size)
+{
+	char *str_to_print;
+	int index, str_count = 0;
+
+	UNUSED(precision);
+	UNUSED(buffer);
+	UNUSED(flags);
+	UNUSED(size);
+	UNUSED(width);
+
+	str_to_print = va_arg(types, char *);
+
+	if (str_to_print == NULL)
 	{
-		va_st_app = ")llun(";
+		str_to_print = ")Null(";
 	}
-	for (i = 0; va_st_app[i] != '\0'; i++)
+	for (index = 0; str_to_print[index]; index++)
 		;
-	for (i -= 1 ; i >= 0; i--)
+	for (index = index - 1; index >= 0; index--)
 	{
-		_putchar(va_st_app[i]);
-		j++;
+		char ch = str_to_print[index];
+
+		write(1, &ch, 1);
+		str_count++;
 	}
-	return (j);
+	return (str_count);
 }

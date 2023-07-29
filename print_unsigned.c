@@ -1,45 +1,40 @@
 #include "main.h"
+
 /**
-* print_unsigned - Prints an unsigned integer to
-* the standard output.
-* @u: unsigned number
-* Descriptions: The va_list containing the unsigned
-* integer to print.
-* Return: The number of characters printed.
-*/
-int print_unsigned(va_list u)
+ * print_unsigned - Converts an unsigned integer to its string
+ * representation and writes it to a character buffer.
+ *
+ * @types: A va_list representing the argument list.
+ * @buffer: The character buffer where the string representation
+ * will be stored.
+ * @flags: An integer representing formatting flags.
+ * @width: The minimum width of the output, formatted accordingly.
+ * @precision: The number of digits to display for the string
+ * representation.
+ * @size: The size of the number (e.g., sizeof(unsigned long int)).
+ *
+ * Return: The number of characters written to the buffer.
+ */
+
+
+int print_unsigned(va_list types, char buffer[],
+		int flags, int width, int precision, int size)
 {
-	int char_count = 0;
-	unsigned int length, pow_of_ten, num;
-	unsigned int index, numeral, va_app;
+	int index = BUFF_SIZE - 2;
+	unsigned long int number = va_arg(types, unsigned long int);
 
-	va_app = va_arg(u, unsigned int);
-	if (va_app != 0)
+	number = cast_num_to_size_unsgnd(number, size);
+	if (number == 0)
 	{
-		num = va_app;
-		length = 0;
-		while (num != 0)
-		{
-			num /= 10;
-			length++;
-		}
-		pow_of_ten = 1;
-		for (index = 1; index <= length - 1; index++)
-			pow_of_ten *= 10;
-		for (index = 1; index <= length; index++)
-		{
-			numeral = va_app / pow_of_ten;
-			_putchar(numeral + '0');
-			char_count++;
-			va_app -= numeral * pow_of_ten;
-			pow_of_ten /= 10;
-		}
+		buffer[index--] = '0';
 	}
-	else
+	buffer[BUFF_SIZE - 1] = '\0';
+	while (number > 0)
 	{
-		_putchar('0');
-		return (1);
+		buffer[index--] = (number % 10) + '0';
+		number /= 10;
 	}
-	return (char_count);
+	index++;
+	return (write_unsigned_to_stout(0, index, buffer, flags,
+				width, precision, size));
 }
-

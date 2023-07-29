@@ -1,49 +1,46 @@
 #include "main.h"
-/**
-* print_integer - Prints an integer to the
-* standard output.
-* @i: The va_list containing the integer to print.
-* Return: The number of characters printed.
-*/
-int print_integer(va_list i)
-{
-	int va_app, count = 0, num;
-	int length, pow_of_ten, index, numeral;
 
-	va_app = va_arg(i, int);
-	if (va_app != 0)
+/**
+ * print_integer - Converts an integer to its string representation and
+ * writes it to a character buffer.
+ *
+ * @types: A va_list representing the argument list.
+ * @buffer: The character buffer where the integer representation will
+ * be stored.
+ * @flags: An integer representing formatting flags.
+ * @width: The minimum width of the output, formatted accordingly.
+ * @precision: The number of digits to display for the integer
+ * representation.
+ * @size: The size of the number (e.g., sizeof(long int)).
+ *
+ * Return: The number of characters written to the buffer.
+ */
+
+int print_integer(va_list types, char buffer[],
+		int flags, int width, int precision, int size)
+{
+	int is_negative_number = 0;
+	int index = BUFF_SIZE - 2;
+	long int va_app = va_arg(types, long int);
+	unsigned long int number;
+
+	va_app = cast_num_to_size(va_app, size);
+
+	if (va_app == 0)
+		buffer[index--] = '0';
+	buffer[BUFF_SIZE - 1] = '\0';
+	number = (unsigned long int)va_app;
+	if (va_app < 0)
 	{
-		if (va_app < 0)
-		{
-			_putchar('-');
-			count++;
-		}
-		num = va_app;
-		length = 0;
-		while (num != 0)
-		{
-			num /= 10;
-			length++;
-		}
-		pow_of_ten = 1;
-		for (index = 1; index <= length - 1; index++)
-			pow_of_ten *= 10;
-		for (index = 1; index <= length; index++)
-		{
-			numeral = va_app / pow_of_ten;
-			if (va_app < 0)
-				_putchar((numeral * -1) + 48);
-			else
-				_putchar(numeral + '0');
-			count++;
-			va_app -= numeral * pow_of_ten;
-			pow_of_ten /= 10;
-		}
+		number = (unsigned long int)((-1) * va_app);
+		is_negative_number = 1;
 	}
-	else
+	while (number > 0)
 	{
-		_putchar('0');
-		return (1);
+		buffer[index--] = (number % 10) + '0';
+		number /= 10;
 	}
-	return (count);
+	index++;
+	return (write_number_to_stout(is_negative_number, index, buffer, flags,
+				width, precision, size));
 }

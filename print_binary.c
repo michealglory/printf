@@ -1,46 +1,55 @@
-#include <stdarg.h>
-#include <stdio.h>
 #include "main.h"
-/**
- * print_binary - This function takes an unsigned integer
- * as a parameter and prints its binary representation to
- * the standard output.
- * @arguments: unsigned integer to be converted and printed
- * Return: The number of characters printed in the binary
- * representation.
- * Returns 1 and prints '0' if the input value is 0.
- */
-int print_binary(va_list arguments)
-{
-	unsigned int length, binpow, i, numeral, input, temp;
-	int char_count = 0;
 
-	input = va_arg(arguments, unsigned int);
-	if (input != 0)
+/**
+ * print_binary - Print binary representation of an unsigned integer.
+ *
+ * This function prints the binary representation of an unsigned integer
+ * to the standard output.
+ * The unsigned integer to be printed is obtained from the variable arguments
+ * list 'types'.
+ *
+ * @types: The va_list containing the variable arguments (unsigned int
+ * in this case).
+ * @buffer: Unused parameter (not used in the function).
+ * @flags: Unused parameter (not used in the function).
+ * @width: Unused parameter (not used in the function).
+ * @precision: Unused parameter (not used in the function).
+ * @size: Unused parameter (not used in the function).
+ *
+ * Return: The number of characters printed.
+ */
+int print_binary(va_list types, char buffer[],
+		int flags, int width, int precision, int size)
+{
+	unsigned int a[32];
+	unsigned int app, number, index, total;
+	int count;
+
+	UNUSED(precision);
+	UNUSED(buffer);
+	UNUSED(size);
+	UNUSED(width);
+	UNUSED(flags);
+
+	number = 2147483648;
+	app = va_arg(types, unsigned int);
+	a[0] = app / number;
+
+	for (index = 1; index < 32; index++)
 	{
-		temp = input;
-		length = 0;
-		while (temp != 0)
+		number /= 2;
+		a[index] = (app / number) % 2;
+	}
+	for (index = 0, total = 0, count = 0; index < 32; index++)
+	{
+		total += a[index];
+		if (total || index == 31)
 		{
-			temp /= 2;
-			length++;
-		}
-		binpow = 1;
-		for (i = 1; i <= length - 1; i++)
-			binpow *= 2;
-		for (i = 1; i <= length; i++)
-		{
-			numeral = input / binpow;
-			_putchar(numeral + '0');
-			char_count++;
-			input -= numeral * binpow;
-			binpow /= 2;
+			char z = '0' + a[index];
+
+			write(1, &z, 1);
+			count++;
 		}
 	}
-	else
-	{
-		_putchar('0');
-		return (1);
-	}
-	return (char_count);
+	return (count);
 }
